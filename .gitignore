@@ -2,6 +2,8 @@ node_modules/
 .next/
 .next-old/
 .next-old2/
+dist-check-*/
+dist-verify*/
 out/
 build/
 dist/
