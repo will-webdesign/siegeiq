@@ -109,6 +109,12 @@ export interface LiveRosterPlayer {
   operatorSlug: string | null;
   kills: number;
   deaths: number;
+  /** Optional GEP roster fields — present only when the provider supplies them
+   *  (never fabricated). `assists` is in R6's published roster schema; `ping`
+   *  is not currently, so it is captured defensively for forward-compat and
+   *  will usually be undefined. */
+  assists?: number;
+  ping?: number;
   profileId?: string;
 }
 

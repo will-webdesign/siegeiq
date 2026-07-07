@@ -18,6 +18,7 @@ import { NotificationService } from "@/services/notification-service";
 import { SocketService } from "@/services/socket-service";
 import { ContentService } from "@/services/content-service";
 import { CoachingService } from "@/services/coaching-service";
+import { GepHealthService } from "@/services/gep-health-service";
 
 const FEED_LIMIT = 30;
 const LOG_LIMIT = 200;
@@ -29,6 +30,7 @@ export class SiegeIQController {
   readonly socket: SocketService;
   readonly content: ContentService;
   private readonly coaching: CoachingService;
+  private readonly gepHealth: GepHealthService;
   private gep: GepSource;
 
   constructor() {
@@ -39,6 +41,10 @@ export class SiegeIQController {
     this.socket = new SocketService(this.bus);
     this.content = new ContentService(this.bus);
     this.coaching = new CoachingService(this.notifications, this.socket);
+    this.gepHealth = new GepHealthService((degraded) => {
+      this.gep.setDegradedFeatures(degraded);
+      this.refreshGepStatus();
+    });
   }
 
   async start(): Promise<void> {
@@ -46,6 +52,7 @@ export class SiegeIQController {
     this.store.subscribe((s) => this.bus.emit("state:changed", s));
 
     this.content.start();
+    this.gepHealth.start();
     this.socket.connect(import.meta.env.VITE_WS_URL as string | undefined);
 
     this.gep.on((e) => {
@@ -125,6 +132,7 @@ export class SiegeIQController {
                 kills: s.roundKills,
                 deaths: s.roundDeaths,
                 side: s.side,
+                outcomeType: e.outcomeType,
               },
             ],
             killFeed: this.feed(s, {

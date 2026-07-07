@@ -18,6 +18,8 @@ export interface SessionRound {
   kills: number;
   deaths: number;
   side: "attacker" | "defender" | null;
+  /** How the round ended (round_outcome_type), when GEP reported it. */
+  outcomeType: string | null;
 }
 
 export interface AppState {
@@ -47,6 +49,8 @@ export const initialAppState = (mode: "overwolf" | "dev"): AppState => ({
     lastEventAt: null,
     gameRunning: false,
     error: null,
+    version: null,
+    degradedFeatures: [],
   },
   phase: "unknown",
   gameRunning: false,

@@ -19,9 +19,11 @@ import {
   REQUIRED_FEATURES,
   type GepSource,
   type GepStatus,
+  type GepVersionInfo,
   type SiegeEvent,
   type SiegeEventListener,
   type GamePhase,
+  type RoundOutcomeType,
 } from "./types";
 import { R6_GAME_ID } from "../ow/env";
 import { createLogger } from "@/core/log";
@@ -72,6 +74,10 @@ function num(value: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+function strOrNull(value: unknown): string | null {
+  return typeof value === "string" && value ? value : value != null ? String(value) : null;
+}
+
 export class OverwolfGepSource implements GepSource {
   private listeners = new Set<SiegeEventListener>();
   private st: GepStatus = {
@@ -82,6 +88,8 @@ export class OverwolfGepSource implements GepSource {
     lastEventAt: null,
     gameRunning: false,
     error: null,
+    version: null,
+    degradedFeatures: [],
   };
   private roster = new Map<string, LiveRosterPlayer>();
   private round = 0;
@@ -90,6 +98,7 @@ export class OverwolfGepSource implements GepSource {
   private mode: string | null = null;
   private matchId: string | null = null;
   private lastKiller: string | null = null;
+  private roundOutcomeType: RoundOutcomeType | null = null;
   private roundEndHandled = false;
   private retries = 0;
 
@@ -146,6 +155,12 @@ export class OverwolfGepSource implements GepSource {
     this.mode = null;
     this.matchId = null;
     this.lastKiller = null;
+    this.roundOutcomeType = null;
+  }
+
+  /** Set by the GEP health service from Overwolf's public status feed. */
+  setDegradedFeatures(features: string[]): void {
+    this.st.degradedFeatures = features;
   }
 
   private isR6(id: number): boolean {
@@ -194,6 +209,22 @@ export class OverwolfGepSource implements GepSource {
     const info = u?.info as unknown;
     if (!info) return;
 
+    // gep_internal.version_info — surface GEP staleness in Diagnostics.
+    const versionInfo = asObject(pluck(info, "version_info"));
+    if (versionInfo) {
+      const ver: GepVersionInfo = {
+        localVersion: strOrNull(versionInfo["local_version"] ?? versionInfo["localVersion"]),
+        publicVersion: strOrNull(versionInfo["public_version"] ?? versionInfo["publicVersion"]),
+        upToDate:
+          typeof versionInfo["is_updated"] === "boolean"
+            ? (versionInfo["is_updated"] as boolean)
+            : typeof versionInfo["up_to_date"] === "boolean"
+              ? (versionInfo["up_to_date"] as boolean)
+              : null,
+      };
+      this.st.version = ver;
+    }
+
     const phase = pluck(info, "phase");
     if (typeof phase === "string") {
       this.emit({
@@ -221,6 +252,14 @@ export class OverwolfGepSource implements GepSource {
       this.emit({ type: "map", mapSlug: this.map, rawMapId: mapId });
     }
 
+    // match_info.round_outcome_type — HOW the round ended (e.g.
+    // "bomb_detonated"). Buffered here and attached to the next round_end
+    // event (which is delivered via the events channel, not info).
+    const outcomeType = pluck(info, "round_outcome_type");
+    if (typeof outcomeType === "string" && outcomeType) {
+      this.roundOutcomeType = outcomeType as RoundOutcomeType;
+    }
+
     const roundNo = pluck(info, "number");
     if (roundNo !== undefined) {
       const n = num(roundNo);
@@ -244,12 +283,9 @@ export class OverwolfGepSource implements GepSource {
       this.emitRoster();
     }
 
-    // The "me" feature arrives as a top-level operator/name on the update.
-    const meOperator = pluck(info, "operator");
-    if (typeof meOperator === "string" && meOperator) {
-      const slug = slugify(meOperator.split("/").pop() ?? meOperator) || null;
-      this.emit({ type: "operator_selected", operatorSlug: slug, rawName: meOperator });
-    }
+    // NB: R6's "me" feature only exposes `name` (per Overwolf's status feed),
+    // so there is no reliable top-level operator here. "My operator" is instead
+    // derived from the local roster row (is_local) inside mergeRoster().
   }
 
   private mergeRoster(players: Record<string, unknown>): void {
@@ -257,20 +293,36 @@ export class OverwolfGepSource implements GepSource {
       if (!key.startsWith("roster_")) continue;
       const p = asObject(raw);
       if (!p) continue;
-      const name = String(p["name"] ?? p["player_name"] ?? "").trim();
+      // Username field: Overwolf's status-feed sample shows `name`, some docs
+      // show `player`. Check both (plus legacy player_name) so we're correct
+      // whichever the live client sends — validate on hardware (TESTING.md).
+      const name = String(p["player"] ?? p["name"] ?? p["player_name"] ?? "").trim();
       if (!name) continue;
       const teamRaw = String(p["team"] ?? "").toLowerCase();
-      const team: "ally" | "enemy" = p["is_local"] === true || teamRaw === "blue" ? "ally" : "enemy";
-      // operator may be a numeric id (no name to slug) or a string name.
+      const isLocal = p["is_local"] === true || p["is_local"] === "true";
+      const team: "ally" | "enemy" = isLocal || teamRaw === "blue" ? "ally" : "enemy";
+      // operator may be a numeric id (no name to slug) or a string name; only
+      // slug real strings, never fabricate a name from a numeric id.
       const opVal = p["operator"];
       const operatorSlug = typeof opVal === "string" ? slugify(opVal.split("/").pop() ?? opVal) || null : null;
-      this.roster.set(name, {
+      const player: LiveRosterPlayer = {
         username: name,
         team,
         operatorSlug,
         kills: num(p["kills"]),
         deaths: num(p["deaths"]),
-      });
+        // NOTE: R6's `health` info value carries a permanent +20 offset for the
+        // knockout stage — always 20 higher than the in-game number. Subtract
+        // 20 before displaying if/when health is surfaced.
+      };
+      // Optional fields — only set when actually present (never fabricate).
+      if (p["assists"] != null) player.assists = num(p["assists"]);
+      if (p["ping"] != null) player.ping = num(p["ping"]); // not in current R6 schema
+      this.roster.set(name, player);
+      // Derive "my operator" from the local player when we can name it.
+      if (isLocal && operatorSlug) {
+        this.emit({ type: "operator_selected", operatorSlug, rawName: String(opVal) });
+      }
     }
   }
 
@@ -294,21 +346,30 @@ export class OverwolfGepSource implements GepSource {
         case "knockedout":
           this.emit({ type: "knocked_out" });
           break;
+        case "defuser_planted":
+          this.emit({ type: "defuser_planted" });
+          break;
+        case "defuser_disabled":
+          this.emit({ type: "defuser_disabled" });
+          break;
         case "roundStart":
           this.round += 1;
           this.roundEndHandled = false;
+          this.roundOutcomeType = null;
           this.emit({ type: "round_start", round: this.round });
           break;
         case "roundOutcome": {
-          // Carries victory/defeat — the authoritative round result.
+          // Carries victory/defeat — the authoritative round result. The
+          // buffered round_outcome_type (from match_info) says *how* it ended.
           const won = this.outcomeToWon(ev.data);
           this.roundEndHandled = true;
-          this.emit({ type: "round_end", round: this.round, won });
+          this.emit({ type: "round_end", round: this.round, won, outcomeType: this.roundOutcomeType });
           break;
         }
         case "roundEnd":
           // Fallback if no roundOutcome was delivered for this round.
-          if (!this.roundEndHandled) this.emit({ type: "round_end", round: this.round, won: null });
+          if (!this.roundEndHandled)
+            this.emit({ type: "round_end", round: this.round, won: null, outcomeType: this.roundOutcomeType });
           break;
         case "matchOutcome":
           this.emit({ type: "match_end" });

@@ -49,6 +49,24 @@ Open **Diagnostics** in the desktop window while playing. Verify:
       validated against live data).
 - [ ] `roster_XX` parsing: 10 players, correct ally/enemy split (local player
       is always "blue" per GEP docs), operator attribution correct.
+- [ ] **Roster player-name field**: `mergeRoster()` reads `player ?? name ??
+      player_name`. Overwolf's status-feed sample shows the field as `name`,
+      but some docs list `player` — confirm which the live client actually
+      sends and that usernames populate (empty usernames = wrong key).
+- [ ] `assists` populates from the roster payload; `ping` is NOT in R6's
+      published roster schema — it's captured defensively and expected to stay
+      undefined unless Overwolf adds it. Confirm.
+- [ ] `round_outcome_type` (match_info) arrives and is attached to `round_end`
+      (`bomb_detonated`, `team_has_been_eliminated`, etc.). Note: currently
+      reported `state:3` (may be unavailable) on Overwolf's status feed.
+- [ ] `me` feature only exposes `name`; "my operator" is derived from the local
+      roster row (is_local). Confirm operator attribution for the local player.
+- [ ] `health` (if surfaced later): remember the documented permanent **+20**
+      offset for the knockout stage (subtract 20 before display).
+- [ ] **Game-ID heuristic** (`isR6()` in `real.ts`) uses a fuzzy match around
+      `R6_GAME_ID = 10826`, which is community/inferred, not published in the
+      docs. Confirm the real `overwolf.games.getRunningGameInfo()` `id` against
+      this heuristic and hard-code the exact id if it differs.
 - [ ] `kill` / `headshot` / `death` / `knockedout` events increment the
       session round stats.
 - [ ] `defuser_planted` / `defuser_disabled` events appear in the feed.
@@ -62,8 +80,17 @@ Open **Diagnostics** in the desktop window while playing. Verify:
 Known GEP caveats from the official docs (verify current behavior):
 - Team colors don't match in-game UI colors since Dec 2021; local player is
   always blue in GEP payloads.
-- GEP health for R6 can change per game patch — check
+- GEP health for R6 can change per game patch. This is now checked
+  automatically: `GepHealthService` polls Overwolf's public status feed
+  (`https://game-events-status.overwolf.com/10826_prod.json`) and the
+  Diagnostics view shows any required features that aren't fully operational.
+  Cross-check the "Feature health" row there against
   https://dev.overwolf.com/ow-native/live-game-data-gep/game-events-status-health/
+- `gep_internal.version_info` is requested and surfaced in Diagnostics ("GEP
+  version") — confirm it reports local/public versions and the up-to-date flag.
+- `defuser` feature is requested and `defuser_planted`/`defuser_disabled` are
+  wired, but the feature is currently `state:3` on Overwolf's status feed —
+  expect it to possibly not fire until Overwolf restores it.
 
 ## D. Account linking & data
 

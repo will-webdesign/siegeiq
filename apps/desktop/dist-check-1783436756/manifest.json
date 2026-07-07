@@ -1,0 +1,73 @@
+{
+  "manifest_version": 1,
+  "type": "WebApp",
+  "meta": {
+    "name": "SiegeIQ",
+    "version": "1.0.0",
+    "minimum-overwolf-version": "0.240.0",
+    "author": "SiegeIQ",
+    "icon": "icons/icon.png",
+    "icon_gray": "icons/icon-gray.png",
+    "launcher_icon": "icons/icon.ico",
+    "window_icon": "icons/icon.png",
+    "description": "The Rainbow Six Siege improvement coach. Evidence-based recommendations, learning goals and session reports — zero setup."
+  },
+  "permissions": ["GameInfo", "Extensions", "Hotkeys", "Notifications"],
+  "data": {
+    "start_window": "background",
+    "windows": {
+      "background": {
+        "file": "background.html",
+        "is_background_page": true,
+        "run_in_background": true,
+        "allow_local_file_access": true
+      },
+      "desktop": {
+        "file": "desktop.html",
+        "desktop_only": true,
+        "native_window": true,
+        "resizable": true,
+        "show_in_taskbar": true,
+        "keep_window_location": true,
+        "size": { "width": 1280, "height": 800 },
+        "min_size": { "width": 1024, "height": 680 },
+        "block_top_window_navigation": true,
+        "popup_blocker": true
+      },
+      "ingame": {
+        "file": "ingame.html",
+        "in_game_only": true,
+        "transparent": true,
+        "clickthrough": false,
+        "resizable": true,
+        "focus_game_takeover": "ReleaseOnHidden",
+        "size": { "width": 420, "height": 560 },
+        "min_size": { "width": 340, "height": 380 },
+        "keep_window_location": true,
+        "block_top_window_navigation": true
+      }
+    },
+    "game_targeting": { "type": "dedicated", "game_ids": [10826] },
+    "game_events": [10826],
+    "launch_events": [
+      {
+        "event": "GameLaunch",
+        "event_data": { "game_ids": [10826] },
+        "start_minimized": true
+      }
+    ],
+    "hotkeys": {
+      "siegeiq_toggle_overlay": {
+        "title": "Show/Hide SiegeIQ overlay",
+        "action-type": "custom",
+        "default": "Ctrl+Shift+S"
+      }
+    },
+    "force_browser": "user",
+    "developer": {
+      "enable_auto_refresh": true,
+      "reload_delay": 1000,
+      "filter": "*.js;*.html;*.css"
+    }
+  }
+}

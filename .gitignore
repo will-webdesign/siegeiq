@@ -1,5 +1,7 @@
 node_modules/
 .next/
+.next-old/
+.next-old2/
 out/
 build/
 dist/

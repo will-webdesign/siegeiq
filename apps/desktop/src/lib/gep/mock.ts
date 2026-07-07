@@ -24,6 +24,8 @@ export class MockGepSource implements GepSource {
     lastEventAt: null,
     gameRunning: false,
     error: null,
+    version: { localVersion: "mock", publicVersion: "mock", upToDate: true },
+    degradedFeatures: [],
   };
   private round = 0;
   private score = { ally: 0, enemy: 0 };
@@ -54,6 +56,10 @@ export class MockGepSource implements GepSource {
     return () => this.listeners.delete(listener);
   }
 
+  setDegradedFeatures(features: string[]): void {
+    this.st.degradedFeatures = features;
+  }
+
   private emit(e: SiegeEvent): void {
     this.st.lastEventAt = Date.now();
     for (const l of this.listeners) l(e);
@@ -69,6 +75,8 @@ export class MockGepSource implements GepSource {
         operatorSlug: i < n ? (ops[i] ?? null) : null,
         kills: this.round > 0 ? Math.max(0, (i * 7 + this.round * 3) % 5) : 0,
         deaths: this.round > 0 ? (i + this.round) % 3 : 0,
+        assists: this.round > 0 ? (i + this.round) % 2 : 0,
+        ping: 20 + ((i * 13 + this.round * 7) % 60),
       }));
     return [...mk(NAMES_A, allyOps, "ally", revealed), ...mk(NAMES_E, enemyOps, "enemy", revealed)];
   }
@@ -120,7 +128,9 @@ export class MockGepSource implements GepSource {
         const won = r % 2 === 1;
         if (won) this.score = { ...this.score, ally: this.score.ally + 1 };
         else this.score = { ...this.score, enemy: this.score.enemy + 1 };
-        this.emit({ type: "round_end", round: r, won });
+        // Cycle a couple of plausible outcome types so the UI exercises them.
+        const outcomeType = won ? "objective_secured" : r % 2 === 0 ? "bomb_detonated" : "team_has_been_eliminated";
+        this.emit({ type: "round_end", round: r, won, outcomeType });
         this.emit({ type: "score", ...this.score });
         this.emit({ type: "phase", phase: "round_results" });
         this.emit({ type: "roster_update", state: this.state(side, 5) });

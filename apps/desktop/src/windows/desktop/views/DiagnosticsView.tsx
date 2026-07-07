@@ -48,6 +48,34 @@ export function DiagnosticsView() {
     ["Features requested", <span className="tiny mono" key="fr">{s.gep.featuresRequested.join(", ") || "—"}</span>],
     ["Features granted", <span className="tiny mono" key="fg">{s.gep.featuresGranted.join(", ") || "—"}</span>],
     [
+      "GEP version",
+      <span className="tiny mono" key="gv">
+        {s.gep.version
+          ? `local ${s.gep.version.localVersion ?? "?"} · public ${s.gep.version.publicVersion ?? "?"}${
+              s.gep.version.upToDate === false ? " · OUTDATED" : s.gep.version.upToDate ? " · up to date" : ""
+            }`
+          : "—"}
+      </span>,
+    ],
+    [
+      "Feature health (Overwolf status)",
+      s.gep.degradedFeatures.length ? (
+        <span className="row" key="fh" style={{ flexWrap: "wrap", justifyContent: "flex-end", gap: 4 }}>
+          <StatusDot state="off" />
+          {s.gep.degradedFeatures.map((d) => (
+            <span key={d} className="tiny mono" style={{ color: "var(--warning)" }}>
+              {d}
+            </span>
+          ))}
+        </span>
+      ) : (
+        <span className="row" key="fh">
+          <StatusDot state="on" />
+          <span className="small">all required features operational</span>
+        </span>
+      ),
+    ],
+    [
       "Last event",
       <span className="small" key="le">
         {s.gep.lastEventAt ? new Date(s.gep.lastEventAt).toLocaleTimeString() : "never"}
