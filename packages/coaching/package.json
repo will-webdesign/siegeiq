@@ -1,0 +1,8 @@
+{
+  "name": "@siegeiq/coaching",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./*": "./src/*.ts" },
+  "dependencies": { "@siegeiq/shared": "*", "@siegeiq/game-data": "*" }
+}

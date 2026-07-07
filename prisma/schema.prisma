@@ -1,0 +1,163 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  profileId       String   @id
+  userId          String
+  platform        String
+  currentName     String
+  aliases         String[] @default([])
+  avatarUrl       String?
+  optOut          Boolean  @default(false)
+  firstSeenAt     DateTime @default(now())
+  lastRefreshedAt DateTime @default(now())
+
+  snapshots      ProfileSnapshot[]
+  matches        InferredMatch[]
+  seasonArchives SeasonArchive[]
+  tracked        TrackedPlayer?
+  learningGoals  LearningGoal[]
+  roundRecords   RoundRecord[]
+
+  @@index([currentName])
+  @@index([platform, currentName])
+}
+
+model ProfileSnapshot {
+  id            BigInt   @id @default(autoincrement())
+  profileId     String
+  takenAt       DateTime @default(now())
+  board         String
+  seasonId      Int
+  rankPoints    Int
+  maxRankPoints Int
+  kills         Int
+  deaths        Int
+  wins          Int
+  losses        Int
+  abandons      Int
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+
+  @@index([profileId, board, seasonId, takenAt])
+}
+
+model InferredMatch {
+  id         BigInt   @id @default(autoincrement())
+  profileId  String
+  playedAt   DateTime
+  board      String
+  seasonId   Int
+  outcome    String // win | loss | abandon
+  rpDelta    Int
+  kills      Int
+  deaths     Int
+  confidence String // high | low
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+
+  @@unique([profileId, playedAt, board])
+  @@index([profileId, playedAt])
+}
+
+model SeasonArchive {
+  id            BigInt   @id @default(autoincrement())
+  profileId     String
+  seasonId      Int
+  board         String
+  rankPoints    Int
+  maxRankPoints Int
+  kills         Int
+  deaths        Int
+  wins          Int
+  losses        Int
+  abandons      Int
+  archivedAt    DateTime @default(now())
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+
+  @@unique([profileId, seasonId, board])
+}
+
+model TrackedPlayer {
+  profileId     String   @id
+  priority      Int      @default(0) // higher = refreshed more often
+  requestCount  Int      @default(1)
+  lastQueuedAt  DateTime @default(now())
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+}
+
+// V3 Phase 1/2 — trust foundation + "reduce early deaths" learning goal
+// (docs/PHASE1_PLAN.md §1). Additive only; no existing model changed besides
+// the two relation fields on Player above.
+
+model LearningGoal {
+  id                 String    @id @default(cuid())
+  profileId          String
+  // Only "reduce_early_deaths" is supported today. Kept as a string (not an
+  // enum) so adding goal types later is a data change, not a migration.
+  goalType           String
+  active             Boolean   @default(true)
+  createdAt          DateTime  @default(now())
+  // Null until enough RoundRecords exist to compute one — never fabricated.
+  baselineSeconds    Float?
+  baselineSampleSize Int?
+  baselineComputedAt DateTime?
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+
+  @@unique([profileId, goalType])
+  @@index([profileId])
+}
+
+/// The atomic evidence unit behind "early deaths" and any future round-level
+/// coaching goal. Only ever populated by real companion telemetry (source =
+/// "companion") or the deterministic demo generator (source = "demo") — never
+/// mixed, never inferred from aggregate stats.
+model RoundRecord {
+  id              BigInt   @id @default(autoincrement())
+  profileId       String
+  playedAt        DateTime @default(now())
+  map             String
+  side            String // attacker | defender
+  operatorSlug    String?
+  survivedSeconds Float // time alive before dying, or full round length if survived
+  died            Boolean
+  source          String // companion | demo
+
+  player Player @relation(fields: [profileId], references: [profileId], onDelete: Cascade)
+
+  @@index([profileId, playedAt])
+}
+
+model LiveSession {
+  id         String   @id @default(cuid())
+  profileId  String
+  token      String   @unique
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  revoked    Boolean  @default(false)
+
+  events LiveMatchEvent[]
+
+  @@index([profileId])
+}
+
+model LiveMatchEvent {
+  id        BigInt   @id @default(autoincrement())
+  sessionId String
+  at        DateTime @default(now())
+  kind      String
+  payload   Json
+
+  session LiveSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, at])
+}

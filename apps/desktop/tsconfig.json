@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "@overwolf/types"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@siegeiq/shared": ["../../packages/shared/src/index.ts"],
+      "@siegeiq/shared/*": ["../../packages/shared/src/*"],
+      "@siegeiq/game-data": ["../../packages/game-data/src/index.ts"],
+      "@siegeiq/game-data/*": ["../../packages/game-data/src/*"],
+      "@siegeiq/coaching": ["../../packages/coaching/src/index.ts"],
+      "@siegeiq/coaching/*": ["../../packages/coaching/src/*"]
+    }
+  },
+  "include": ["src"]
+}

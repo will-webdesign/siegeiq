@@ -1,0 +1,446 @@
+[
+  {
+    "slug": "bank",
+    "name": "Bank",
+    "location": "Los Angeles, USA",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement (Lockers/CCTV)",
+      "1F Open Area/Staff Room",
+      "1F Tellers/Archives",
+      "2F Exec Office/CFO"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "thermite",
+      "thatcher",
+      "buck",
+      "ace"
+    ],
+    "bestDefenders": [
+      "mira",
+      "bandit",
+      "echo",
+      "valkyrie"
+    ],
+    "notes": "Vault pushes live and die on basement wall control; server room vertical is the classic Buck play."
+  },
+  {
+    "slug": "border",
+    "name": "Border",
+    "location": "East Border, Middle East",
+    "released": "2016",
+    "ranked": true,
+    "sites": [
+      "1F Customs/Supply",
+      "1F Ventilation/Workshop",
+      "1F Bathroom/Tellers",
+      "2F Armory/Archives"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "maverick",
+      "thatcher",
+      "zofia",
+      "iana"
+    ],
+    "bestDefenders": [
+      "jager",
+      "bandit",
+      "mozzie",
+      "smoke"
+    ],
+    "notes": "Tellers control decides most rounds; attackers who never take east stairs feed roamers."
+  },
+  {
+    "slug": "chalet",
+    "name": "Chalet",
+    "location": "Courchevel, France",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement Garage/Wine",
+      "1F Bar/Gaming",
+      "1F Kitchen/Trophy",
+      "2F Master/Office"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "buck",
+      "sledge",
+      "ace",
+      "lion"
+    ],
+    "bestDefenders": [
+      "bandit",
+      "kaid",
+      "valkyrie",
+      "alibi"
+    ],
+    "notes": "Vertical map \u2014 kitchen ceiling and master floor breaks swing rounds hard."
+  },
+  {
+    "slug": "clubhouse",
+    "name": "Clubhouse",
+    "location": "Ottawa, Canada",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement Church/Arsenal",
+      "1F Bar/Stock",
+      "2F Cash/CCTV",
+      "2F Gym/Bedroom"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "thermite",
+      "thatcher",
+      "flores",
+      "buck"
+    ],
+    "bestDefenders": [
+      "mira",
+      "bandit",
+      "maestro",
+      "smoke"
+    ],
+    "notes": "Basement is the money site: garage + church walls dictate everything."
+  },
+  {
+    "slug": "coastline",
+    "name": "Coastline",
+    "location": "Ibiza, Spain",
+    "released": "2017",
+    "ranked": true,
+    "sites": [
+      "1F Kitchen/Service",
+      "1F Blue Bar/Sunrise",
+      "2F Penthouse/Theater",
+      "2F Billiards/Hookah"
+    ],
+    "lean": "attacker",
+    "bestAttackers": [
+      "ash",
+      "iana",
+      "zofia",
+      "hibana"
+    ],
+    "bestDefenders": [
+      "jager",
+      "ela",
+      "valkyrie",
+      "melusi"
+    ],
+    "notes": "Fast, gunfight-heavy map; hookah/billiards favors aggressive defense swings."
+  },
+  {
+    "slug": "consulate",
+    "name": "Consulate",
+    "location": "Abidjan, Ivory Coast",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement Garage/Cafeteria",
+      "1F Piano/Lobby",
+      "2F Consul Office/Meeting",
+      "1F Tellers/Archives"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "thermite",
+      "montagne",
+      "lion",
+      "ace"
+    ],
+    "bestDefenders": [
+      "bandit",
+      "mira",
+      "echo",
+      "warden"
+    ],
+    "notes": "Reworked layout; garage remains a breach-utility war."
+  },
+  {
+    "slug": "emerald-plains",
+    "name": "Emerald Plains",
+    "location": "Ireland",
+    "released": "2022",
+    "ranked": true,
+    "sites": [
+      "1F Bar/Lounge",
+      "1F Dining/Kitchen",
+      "2F Admin/Meeting",
+      "2F Gallery/Trophy"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "iana",
+      "ace",
+      "buck",
+      "grim"
+    ],
+    "bestDefenders": [
+      "mozzie",
+      "melusi",
+      "thorn",
+      "jager"
+    ],
+    "notes": "Long sightlines on second floor; attackers should split via terrace."
+  },
+  {
+    "slug": "kafe-dostoyevsky",
+    "name": "Kafe Dostoyevsky",
+    "location": "Moscow, Russia",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "1F Kitchen/Service",
+      "2F Fireplace/Mining",
+      "2F Reading Room",
+      "3F Cocktail/Bar"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "buck",
+      "sledge",
+      "finka",
+      "thatcher"
+    ],
+    "bestDefenders": [
+      "mira",
+      "smoke",
+      "valkyrie",
+      "kaid"
+    ],
+    "notes": "Third-floor holds depend on cocktail wall; kitchen vertical is brutal for 2F sites."
+  },
+  {
+    "slug": "kanal",
+    "name": "Kanal",
+    "location": "Hamburg, Germany",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement Kayaks/Supply",
+      "1F Coast Guard/Lounge",
+      "2F Server/Radio",
+      "1F Security/Maps"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "thermite",
+      "zofia",
+      "iana",
+      "nomad"
+    ],
+    "bestDefenders": [
+      "bandit",
+      "mozzie",
+      "valkyrie",
+      "rook"
+    ],
+    "notes": "Two buildings joined by bridges \u2014 attackers must own the connectors."
+  },
+  {
+    "slug": "lair",
+    "name": "Lair",
+    "location": "Unknown",
+    "released": "2023",
+    "ranked": true,
+    "sites": [
+      "Basement Lab/Storage",
+      "1F Command/Operations",
+      "2F Master/Office",
+      "1F Armory/Range"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "ace",
+      "flores",
+      "grim",
+      "ram"
+    ],
+    "bestDefenders": [
+      "azami",
+      "fenrir",
+      "solis",
+      "wamai"
+    ],
+    "notes": "Designed for ranked 2.0 era; utility-heavy mid-round fights."
+  },
+  {
+    "slug": "nighthaven-labs",
+    "name": "Nighthaven Labs",
+    "location": "Singapore",
+    "released": "2022",
+    "ranked": true,
+    "sites": [
+      "Basement Tank/Server",
+      "1F Assembly/Storage",
+      "2F Command/Servers",
+      "1F Cafeteria/Lounge"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "flores",
+      "brava",
+      "ace",
+      "lion"
+    ],
+    "bestDefenders": [
+      "wamai",
+      "azami",
+      "valkyrie",
+      "kaid"
+    ],
+    "notes": "Dense gadget map \u2014 anti-gadget attackers earn their pick."
+  },
+  {
+    "slug": "oregon",
+    "name": "Oregon",
+    "location": "Oregon, USA",
+    "released": "2015",
+    "ranked": true,
+    "sites": [
+      "Basement Laundry/Supply",
+      "1F Kitchen/Dining",
+      "2F Kids/Dorms",
+      "1F Meeting/Kitchen"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "buck",
+      "thermite",
+      "zofia",
+      "deimos"
+    ],
+    "bestDefenders": [
+      "smoke",
+      "jager",
+      "pulse",
+      "thunderbird"
+    ],
+    "notes": "Laundry pushes hinge on freezer wall; dorms is a vertical playground."
+  },
+  {
+    "slug": "outback",
+    "name": "Outback",
+    "location": "Australia",
+    "released": "2019",
+    "ranked": true,
+    "sites": [
+      "1F Compressor/Gear",
+      "1F Restaurant/Bushranger",
+      "2F Laundry/Games",
+      "2F Party/Office"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "gridlock",
+      "iana",
+      "hibana",
+      "sledge"
+    ],
+    "bestDefenders": [
+      "mozzie",
+      "goyo",
+      "ela",
+      "warden"
+    ],
+    "notes": "Reworked; garage control decides compressor rounds."
+  },
+  {
+    "slug": "skyscraper",
+    "name": "Skyscraper",
+    "location": "Nagoya, Japan",
+    "released": "2016",
+    "ranked": true,
+    "sites": [
+      "1F Kitchen/BBQ",
+      "1F Bedroom/Bathroom",
+      "2F Exhibition/Office",
+      "2F Tea Room/Karaoke"
+    ],
+    "lean": "attacker",
+    "bestAttackers": [
+      "hibana",
+      "ying",
+      "iana",
+      "ash"
+    ],
+    "bestDefenders": [
+      "echo",
+      "jager",
+      "melusi",
+      "aruni"
+    ],
+    "notes": "Reworked; tight corridors \u2014 flashes and shields shine."
+  },
+  {
+    "slug": "theme-park",
+    "name": "Theme Park",
+    "location": "Hong Kong",
+    "released": "2016",
+    "ranked": true,
+    "sites": [
+      "1F Armory/Throne",
+      "1F Lab/Storage",
+      "2F Bunk/Day Care",
+      "2F Initiation/Office"
+    ],
+    "lean": "balanced",
+    "bestAttackers": [
+      "ace",
+      "zofia",
+      "lion",
+      "flores"
+    ],
+    "bestDefenders": [
+      "melusi",
+      "smoke",
+      "valkyrie",
+      "fenrir"
+    ],
+    "notes": "Bunk defense collapses without drone denial \u2014 Mute/Mozzie priority."
+  },
+  {
+    "slug": "villa",
+    "name": "Villa",
+    "location": "Tuscany, Italy",
+    "released": "2018",
+    "ranked": true,
+    "sites": [
+      "1F Living/Library",
+      "1F Kitchen/Dining",
+      "2F Aviator/Games",
+      "2F Trophy/Statuary"
+    ],
+    "lean": "defender",
+    "bestAttackers": [
+      "buck",
+      "maverick",
+      "thatcher",
+      "iana"
+    ],
+    "bestDefenders": [
+      "mira",
+      "maestro",
+      "alibi",
+      "kaid"
+    ],
+    "notes": "Huge attacker droning tax; aviator holds are Mira-dependent."
+  },
+  {
+    "slug": "calypso-casino",
+    "name": "Calypso Casino",
+    "location": "Caribbean",
+    "released": "2026",
+    "ranked": true,
+    "sites": [],
+    "lean": "balanced",
+    "bestAttackers": [],
+    "bestDefenders": [],
+    "notes": "New map introduced in Y11S2 System Override alongside Ranked Overhaul 3.0. Site data pending verification."
+  }
+]

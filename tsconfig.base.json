@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@siegeiq/shared": ["packages/shared/src/index.ts"],
+      "@siegeiq/shared/*": ["packages/shared/src/*"],
+      "@siegeiq/game-data": ["packages/game-data/src/index.ts"],
+      "@siegeiq/game-data/*": ["packages/game-data/src/*"],
+      "@siegeiq/coaching": ["packages/coaching/src/index.ts"],
+      "@siegeiq/coaching/*": ["packages/coaching/src/*"],
+      "@siegeiq/server": ["packages/server/src/index.ts"],
+      "@siegeiq/server/*": ["packages/server/src/*"]
+    }
+  }
+}
