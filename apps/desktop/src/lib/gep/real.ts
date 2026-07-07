@@ -164,7 +164,11 @@ export class OverwolfGepSource implements GepSource {
   }
 
   private isR6(id: number): boolean {
-    return Math.floor(id / 10) === Math.floor(R6_GAME_ID / 10) || id === R6_GAME_ID;
+    // Overwolf appends a variant digit to the base game ID for the specific
+    // running instance (confirmed live: R6 Siege reports id 108261 while
+    // R6_GAME_ID is the base 10826 — 108261 = 10826*10 + 1). Recover the base
+    // by dividing the reported id by 10, then compare to the base directly.
+    return Math.floor(id / 10) === R6_GAME_ID || id === R6_GAME_ID;
   }
 
   private setFeatures(): void {
